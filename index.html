@@ -24,13 +24,17 @@ button{padding:12px 20px;border-radius:10px;border:0;background:#2563eb;color:#f
 <button onclick="sor()">Gönder</button>
 </div>
 
-<script>
-const FUNCTION_URL = "https://cvuoegfzqdnsnpnfcxyq.supabase.co/functions/v1/lefttash-brain"
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
+
+const SUPABASE_URL = "https://cvuoegfzqdnsnpnfcxyq.supabase.co"
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2dW9lcWZ6cWRuc3BuZmN4Y3lxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMxODc1MDcsImV4cCI6MjEwODc2MzUwN30._q-StL7jj01blrOf217EpmVGdhnEV598z0jQ4d5bnDc"
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
 const session_id = localStorage.getItem("hertash_session") || crypto.randomUUID()
 localStorage.setItem("hertash_session", session_id)
 
-async function sor(){
+window.sor = async function(){
   const inputEl = document.getElementById("input")
   const msg = inputEl.value.trim()
   if(!msg) return
@@ -40,19 +44,14 @@ async function sor(){
   chat.scrollTop = chat.scrollHeight
 
   try {
-    const res = await fetch(FUNCTION_URL, {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        "apikey": SUPABASE_ANON_KEY,
-        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
-      },
-      body: JSON.stringify({ message: msg, session_id })
+    const { data, error } = await supabase.functions.invoke("lefttash-brain", {
+      body: { message: msg, session_id }
     })
-    const data = await res.json()
+    if(error) throw error
     chat.innerHTML += `<div class="msg bot">${data.reply}</div>`
   } catch(e){
     chat.innerHTML += `<div class="msg bot">Hata: ${e.message}</div>`
+    console.error(e)
   }
   chat.scrollTop = chat.scrollHeight
 }
