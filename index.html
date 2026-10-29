@@ -2,7 +2,6 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>hertash</title>
 <style>
 body{font-family:sans-serif;max-width:700px;margin:0 auto;padding:20px;background:#0a0a0a;color:#fff}
@@ -26,6 +25,9 @@ button{padding:12px 20px;border-radius:10px;border:0;background:#2563eb;color:#f
 
 <script>
 const FUNCTION_URL = "https://cvuoegfzqdnsnpnfcxyq.supabase.co/functions/v1/lefttash-brain"
+// BURAYA Supabase > Settings > API Keys > Publishable sekmesindeki sb_publishable_... kodunu yapıştır
+const PUBLISHABLE_KEY = "sb_publishable_Ew-1_uEyjjFOQgUw7iXtGw_BIdVkzIa"
+
 const session_id = localStorage.getItem("hertash_session") || crypto.randomUUID()
 localStorage.setItem("hertash_session", session_id)
 
@@ -41,7 +43,11 @@ async function sor(){
   try {
     const res = await fetch(FUNCTION_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "apikey": PUBLISHABLE_KEY,
+        "Authorization": `Bearer ${PUBLISHABLE_KEY}`
+      },
       body: JSON.stringify({ message: msg, session_id })
     })
     const data = await res.json()
