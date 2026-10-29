@@ -24,17 +24,12 @@ button{padding:12px 20px;border-radius:10px;border:0;background:#2563eb;color:#f
 <button onclick="sor()">Gönder</button>
 </div>
 
-<script type="module">
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
-
-const SUPABASE_URL = "https://cvuoegfzqdnsnpnfcxyq.supabase.co"
-const SUPABASE_ANON_KEY = "sb_publishable_Ew-1_uEyjjFOQgUw7iXtGw_BIdVkzIa"
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-
+<script>
+const FUNCTION_URL = "https://cvuoegfzqdnsnpnfcxyq.supabase.co/functions/v1/lefttash-brain"
 const session_id = localStorage.getItem("hertash_session") || crypto.randomUUID()
 localStorage.setItem("hertash_session", session_id)
 
-window.sor = async function(){
+async function sor(){
   const inputEl = document.getElementById("input")
   const msg = inputEl.value.trim()
   if(!msg) return
@@ -44,14 +39,15 @@ window.sor = async function(){
   chat.scrollTop = chat.scrollHeight
 
   try {
-    const { data, error } = await supabase.functions.invoke("lefttash-brain", {
-      body: { message: msg, session_id }
+    const res = await fetch(FUNCTION_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: msg, session_id })
     })
-    if(error) throw error
+    const data = await res.json()
     chat.innerHTML += `<div class="msg bot">${data.reply}</div>`
   } catch(e){
     chat.innerHTML += `<div class="msg bot">Hata: ${e.message}</div>`
-    console.error(e)
   }
   chat.scrollTop = chat.scrollHeight
 }
