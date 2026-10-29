@@ -25,11 +25,7 @@ button{padding:12px 20px;border-radius:10px;border:0;background:#2563eb;color:#f
 
 <script>
 const FUNCTION_URL = "https://cvuoegfzqdnsnpnfcxyq.supabase.co/functions/v1/lefttash-brain"
-// BURAYA Supabase > Settings > API Keys > Publishable sekmesindeki sb_publishable_... kodunu yapıştır
 const PUBLISHABLE_KEY = "sb_publishable_Ew-1_uEyjjFOQgUw7iXtGw_BIdVkzIa"
-
-const session_id = localStorage.getItem("hertash_session") || crypto.randomUUID()
-localStorage.setItem("hertash_session", session_id)
 
 async function sor(){
   const inputEl = document.getElementById("input")
@@ -39,7 +35,6 @@ async function sor(){
   const chat = document.getElementById("chat")
   chat.innerHTML += `<div class="msg user">${msg}</div>`
   chat.scrollTop = chat.scrollHeight
-
   try {
     const res = await fetch(FUNCTION_URL, {
       method: "POST",
@@ -48,7 +43,7 @@ async function sor(){
         "apikey": PUBLISHABLE_KEY,
         "Authorization": `Bearer ${PUBLISHABLE_KEY}`
       },
-      body: JSON.stringify({ message: msg, session_id })
+      body: JSON.stringify({ message: msg })
     })
     const data = await res.json()
     chat.innerHTML += `<div class="msg bot">${data.reply}</div>`
